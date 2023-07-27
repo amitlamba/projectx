@@ -9,15 +9,22 @@ def get_historical_data(stock_symbol, years=20):
 
     return historical_data
 
-
-if __name__ == "__main__":
-    stock_symbol = "RELIANCE.NS"  # Stock symbol
-    years = 20  # Replace with the desired number of years
-
-    
+def addHistoricalDataToExcelFile(stock_symbol,years):
     historical_data = get_historical_data(stock_symbol, years)
+
     
     if not historical_data.empty:
        df = pd.DataFrame(historical_data)
-       df.to_excel("historical_data_"+stock_symbol+'.xlsx', index=False)
+       df.insert(0, 'Date', df.index.strftime("%Y-%m-%d"))
+       df.to_excel("HD_"+symbol+"_using_yfinanceLib.xlsx", index=False)
+
+if __name__ == "__main__":
+    
+    stock_symbols = ["RELIANCE.NS","TCS.NS", "HDFCBANK.NS", "ICICIBANK.NS", "HINDUNILVR.NS"]
+    years = 20  # Replace with the desired number of years
+
+    for symbol in stock_symbols:
+        addHistoricalDataToExcelFile(symbol,years)
+
+    
     

@@ -14,11 +14,11 @@ def convert_Epoch_To_DateTime (epoch):
 def get_HistoricalData_rapidAPI(symbol):
 
     url = "https://apidojo-yahoo-finance-v1.p.rapidapi.com/stock/v2/get-historical-data"
-  
-   
+    
+    current_time_epoch = int(time.time())
     querystring = {
         "period1":"1041379200",
-        "period2":"1690190100",
+        "period2":current_time_epoch,
         "symbol":symbol,
         "frequency":"1d",
         "filter":"history"}
@@ -34,22 +34,30 @@ def get_HistoricalData_rapidAPI(symbol):
     # Response From API
     data = response.json()
 
- 
-    for x in data["prices"]:
-        try :
-            convertedTime=convert_Epoch_To_DateTime(x["date"])
-            if(x["close"]==None) : continue
-            print(convertedTime ,x["close"])
-         
-        except:
-            continue;
+    
+    data = {"prices": data["prices"]}
+    
+    
+    df = pd.DataFrame(data["prices"])
+    df['date'] = pd.to_datetime(df['date'], unit='s').dt.strftime('%Y-%m-%d')
+   
+    df = df[df["open"].notnull()] 
+    
+    
+    df = df.reset_index(drop=True)  #drop empty rows
+    df = df.dropna(axis=1, how='all') # drop empty columns
+
+    df.to_excel("HD_"+symbol+"_using_RapidAPI"+'.xlsx', index=False)
+    
+
+   
 
   
 
 
 if __name__ == "__main__":
-    #  stock_symbols = ["RELIANCE.NS","TCS.NS", "HDFCBANK.NS", "ICICIBANK.NS", "HINDUNILVR.NS"]
-     stock_symbols = ["RELIANCE.NS"]
+     stock_symbols = ["RELIANCE.NS","TCS.NS", "HDFCBANK.NS", "ICICIBANK.NS", "HINDUNILVR.NS"]
+     
      for symbol in stock_symbols:
          get_HistoricalData_rapidAPI(symbol)
          
