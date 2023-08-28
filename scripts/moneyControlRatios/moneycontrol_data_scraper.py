@@ -97,6 +97,30 @@ def getBVColumn(row):
                 ID = row[0]
                 result_dict[ID] = {i: value for i, value in enumerate(row[1:], start=0) if value != '\xa0'}
                 data = pd.DataFrame(result_dict)
+
+def getBookVaueColumn(row):
+    isBasicEPS = row[0].find("Book Value [ExclRevalReserve]/Share (Rs.)")
+    global data            
+    if isBasicEPS != -1:
+                    
+        if 'Book Value [ExclRevalReserve]/Share (Rs.)' in result_dict:
+            insertAt=len(result_dict['Book Value [ExclRevalReserve]/Share (Rs.)'])
+            ID = row[0]
+                        
+            i = 1
+                        
+            # Run the while loop until the value is not equal to '\xa0'
+            while row[i] != '\xa0':
+                    result_dict[ID][insertAt]=row[i]
+                    insertAt+=1;
+                    i+=1
+                        
+            data = pd.DataFrame(result_dict)
+        else :
+            ID = row[0]
+            result_dict[ID] = {i: value for i, value in enumerate(row[1:], start=0) if value != '\xa0'}
+            data = pd.DataFrame(result_dict)
+
 def addDataToExcel(companyName,companyShortForm,findthis): #for Reliance 
     
     result_dict.clear()
@@ -119,7 +143,7 @@ def addDataToExcel(companyName,companyShortForm,findthis): #for Reliance
                 row_data = [td.text for td in row.find_all('td')]
                 rows.append(row_data)
 
-            
+            # print(rows);        
         
             for row in rows:
                 
@@ -127,6 +151,7 @@ def addDataToExcel(companyName,companyShortForm,findthis): #for Reliance
                 getEPSColumn(row)
                 getDEColumn(row)
                 getBVColumn(row)
+                getBookVaueColumn(row);
                      
     cur_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     parent_directory = os.path.dirname(cur_dir)

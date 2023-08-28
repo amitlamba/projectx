@@ -1,7 +1,7 @@
 import yfinance as yf
 import pandas as pd
 import os
-def get_historical_data(stock_symbol, years=20):
+def get_historical_data(stock_symbol, years=5):
     # Get the ticker object for the stock symbol
     stock = yf.Ticker(stock_symbol)
 
@@ -35,7 +35,7 @@ def addHistoricalDataToExcelFile(stock_symbol,years):
 if __name__ == "__main__":
     
     stock_symbols = ["RELIANCE.NS","TCS.NS", "HDFCBANK.NS", "ICICIBANK.NS", "HINDUNILVR.NS"]
-    years = 20  # Replace with the desired number of years
+    years = 5  # Replace with the desired number of years
 
     for symbol in stock_symbols:
         addHistoricalDataToExcelFile(symbol,years)
